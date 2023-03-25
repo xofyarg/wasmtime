@@ -22,54 +22,6 @@ impl File {
     }
 }
 
-pub struct TcpListener(wasi_cap_std_sync::net::TcpListener);
-
-impl TcpListener {
-    pub(crate) fn from_inner(listener: wasi_cap_std_sync::net::TcpListener) -> Self {
-        TcpListener(listener)
-    }
-    pub fn from_cap_std(listener: cap_std::net::TcpListener) -> Self {
-        Self::from_inner(wasi_cap_std_sync::net::TcpListener::from_cap_std(listener))
-    }
-}
-
-pub struct TcpStream(wasi_cap_std_sync::net::TcpStream);
-
-impl TcpStream {
-    pub(crate) fn from_inner(stream: wasi_cap_std_sync::net::TcpStream) -> Self {
-        TcpStream(stream)
-    }
-    pub fn from_cap_std(stream: cap_std::net::TcpStream) -> Self {
-        Self::from_inner(wasi_cap_std_sync::net::TcpStream::from_cap_std(stream))
-    }
-}
-
-#[cfg(unix)]
-pub struct UnixListener(wasi_cap_std_sync::net::UnixListener);
-
-#[cfg(unix)]
-impl UnixListener {
-    pub(crate) fn from_inner(listener: wasi_cap_std_sync::net::UnixListener) -> Self {
-        UnixListener(listener)
-    }
-    pub fn from_cap_std(listener: cap_std::os::unix::net::UnixListener) -> Self {
-        Self::from_inner(wasi_cap_std_sync::net::UnixListener::from_cap_std(listener))
-    }
-}
-
-#[cfg(unix)]
-pub struct UnixStream(wasi_cap_std_sync::net::UnixStream);
-
-#[cfg(unix)]
-impl UnixStream {
-    fn from_inner(stream: wasi_cap_std_sync::net::UnixStream) -> Self {
-        UnixStream(stream)
-    }
-    pub fn from_cap_std(stream: cap_std::os::unix::net::UnixStream) -> Self {
-        Self::from_inner(wasi_cap_std_sync::net::UnixStream::from_cap_std(stream))
-    }
-}
-
 pub struct Stdin(wasi_cap_std_sync::stdio::Stdin);
 
 pub fn stdin() -> Stdin {
@@ -233,12 +185,6 @@ macro_rules! wasi_file_impl {
 }
 
 wasi_file_impl!(File);
-wasi_file_impl!(TcpListener);
-wasi_file_impl!(TcpStream);
-#[cfg(unix)]
-wasi_file_impl!(UnixListener);
-#[cfg(unix)]
-wasi_file_impl!(UnixStream);
 wasi_file_impl!(Stdin);
 wasi_file_impl!(Stdout);
 wasi_file_impl!(Stderr);

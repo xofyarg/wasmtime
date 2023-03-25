@@ -95,7 +95,16 @@ impl WasiCtxBuilder {
     }
     pub fn preopened_socket(self, fd: u32, socket: impl Into<Socket>) -> Result<Self, Error> {
         let socket: Socket = socket.into();
-        let file: Box<dyn WasiFile> = socket.into();
+
+        let file: Box<dyn WasiFile> = match socket {
+            Socket::TcpListener(s) => Box::new(net::TcpListener::from_cap_std(s)?),
+            Socket::TcpStream(s) => Box::new(net::TcpStream::from_cap_std(s)?),
+            #[cfg(unix)]
+            Socket::UnixListener(s) => Box::new(net::UnixListener::from_cap_std(s)?),
+            #[cfg(unix)]
+            Socket::UnixStream(s) => Box::new(net::UnixStream::from_cap_std(s)?),
+        };
+
         self.0.insert_file(fd, file);
         Ok(self)
     }
