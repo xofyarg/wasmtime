@@ -117,6 +117,11 @@ impl WasiCtxBuilder {
         Ok(self)
     }
 
+    pub fn preopened_raw_file(self, fd: u32, file: Box<dyn WasiFile>, caps: FileCaps) -> Self {
+        self.0.insert_file(fd, file, caps);
+        self
+    }
+
     pub fn build(self) -> WasiCtx {
         self.0
     }
