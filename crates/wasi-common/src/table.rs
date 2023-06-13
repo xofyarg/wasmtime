@@ -36,12 +36,16 @@ impl Table {
         let mut inner = self.0.write().unwrap();
         // NOTE: The performance of this new key calculation could be very bad once keys wrap
         // around.
-        if inner.map.len() == u32::MAX as usize {
+        if inner.map.len() == i32::MAX as usize {
             return Err(Error::trap(anyhow::Error::msg("table has no free keys")));
         }
         loop {
             let key = inner.next_key;
-            inner.next_key += 1;
+            if inner.next_key == i32::MAX as u32 {
+                inner.next_key = 3;
+            } else {
+                inner.next_key += 1;
+            }
             if inner.map.contains_key(&key) {
                 continue;
             }
